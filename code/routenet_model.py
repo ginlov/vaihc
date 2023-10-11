@@ -127,7 +127,7 @@ class RouteNetModel(tf.keras.Model):
             h_tild = tf.gather(link_state, links)
 
             ids = tf.stack([paths, seqs], axis=1)
-            max_len = f_["link_to_path"].bounding_shape()[1]
+            max_len = tf.cast(f_["link_to_path"].bounding_shape()[1], tf.int32)
             shape = tf.stack([
                 f_['n_paths'],
                 max_len,
