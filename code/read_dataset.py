@@ -133,6 +133,7 @@ def transformation(x, y):
             x,y: The modified predictor/target variables.
         """
     x["n_links"] = tf.shape(x["capacity_per_link"])[0]
+    x['link_capacity'] = x['capacity_per_link']
     x["n_paths"] = tf.shape(x["id_per_flow"])[0]
     x["bandwith"] = x["traffic_per_flow"]
     x["packets"] = x["packets_per_flow"]
