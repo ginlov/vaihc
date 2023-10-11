@@ -115,7 +115,7 @@ class RouteNetModel(tf.keras.Model):
             f_['packets'],
             f_['packet_size_per_flow'],
             f_['type_per_flow'],
-            tf.expand_dims(f_['length_per_flow'], axis=1),
+            tf.cast(tf.expand_dims(f_['length_per_flow'], axis=1), tf.float32),
             tf.zeros(shape)
         ], axis=1)
 
