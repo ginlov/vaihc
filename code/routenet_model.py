@@ -112,7 +112,7 @@ class RouteNetModel(tf.keras.Model):
         path_state = tf.concat([
             # tf.expand_dims(f_['bandwith'], axis=1),
             f_['bandwith'],
-            f_['packet'],
+            f_['packets'],
             f_['packet_size_per_flow'],
             f_['type_per_flow'],
             tf.expand_dims(f_['length_per_flow'], axis=1),
