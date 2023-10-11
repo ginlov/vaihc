@@ -137,6 +137,8 @@ def transformation(x, y):
     x["bandwith"] = x["traffic_per_flow"]
     x["packets"] = x["packets_per_flow"]
     x["links"] = x["link_to_path"].values
+    x["paths"] = x["link_to_path"].value_rowids()
+    x["sequences"] = tf.map_fn(fn=lambda x: list(range(x.shape[0])), elems=x["link_to_path"]).values
     return x, y
 
 
