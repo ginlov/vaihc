@@ -98,7 +98,7 @@ class RouteNetModel(tf.keras.Model):
 
         # Initialize the initial hidden state for links
         link_state = tf.concat([
-            tf.expand_dims(f_['link_capacity'], axis=1),
+            f_['link_capacity'],
             tf.zeros(shape)
         ], axis=1)
 
