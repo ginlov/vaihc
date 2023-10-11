@@ -139,9 +139,9 @@ def transformation(x, y):
     x["packets"] = x["packets_per_flow"]
     x["links"] = x["link_to_path"].values
     x["paths"] = x["link_to_path"].value_rowids()
-    x["sequences"] = tf.map_fn(fn=lambda t: tf.py_function(lambda x: list(range(x.shape[0])), inp=[t], Tout=tf.int64),
+    x["sequences"] = tf.reshape(tf.map_fn(fn=lambda t: tf.py_function(lambda x: list(range(x.shape[0])), inp=[t], Tout=tf.int64),
                                elems=x["link_to_path"], fn_output_signature=tf.TensorSpec(
-                               shape=tf.TensorShape(None), dtype=tf.int64)).values
+                               shape=tf.TensorShape(None), dtype=tf.int64)), [-1])
     return x, y
 
 
