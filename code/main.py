@@ -20,7 +20,7 @@ import pandas as pd
 import numpy as np
 import tempfile
 import os
-from read_dataset import input_fn
+from read_dataset import input_fn, transformation
 from routenet_model import model_fn
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
@@ -51,12 +51,12 @@ def train_and_evaluate(train_dir, eval_dir, config, model_dir=None):
     )
 
     train_spec = tf.estimator.TrainSpec(
-        input_fn=lambda: input_fn(train_dir, repeat=True, shuffle=True),
+        input_fn=lambda: tf.data.Dataset.load("training", compression="GZIP").map(transformation),
         max_steps=int(config['RUN_CONFIG']['train_steps'])
     )
 
     eval_spec = tf.estimator.EvalSpec(
-        input_fn=lambda: input_fn(eval_dir, repeat=False, shuffle=False),
+        input_fn=lambda: tf.data.Dataset.load("training_warmup", compression="GZIP").map(transformation),
         throttle_secs=int(config['RUN_CONFIG']['throttle_secs'])
     )
 
@@ -82,7 +82,7 @@ def predict(test_dir, model_dir, config):
         params=config
     )
 
-    pred_results = estimator.predict(input_fn=lambda: input_fn(test_dir, repeat=False, shuffle=False))
+    pred_results = estimator.predict(input_fn=lambda: tf.data.Dataset.load("test_hide_label", compression="GZIP").map(transformation))
 
     return [pred['predictions'] for pred in pred_results]
 

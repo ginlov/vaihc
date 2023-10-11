@@ -86,9 +86,20 @@ class RouteNetModel(tf.keras.Model):
 
         f_ = inputs
 
+        paths = []
+        seqs = []
+        segment = 0
+        for x in f_["link_to_path"]:
+            paths += len(x)*[segment]
+            segment+=1
+            seqs += list(range(len(x)))
+
+        f_["paths"] = paths
+        f_["seqences"] = seqs
+
         links = f_['links']
-        paths = f_['paths']
-        seqs = f_['sequences']
+        # paths = f_['paths']
+        # seqs = f_['sequences']
 
         # Compute the shape for the  all-zero tensor for link_state
         shape = tf.stack([
@@ -105,12 +116,17 @@ class RouteNetModel(tf.keras.Model):
         # Compute the shape for the  all-zero tensor for path_state
         shape = tf.stack([
             f_['n_paths'],
-            int(self.config['HYPERPARAMETERS']['path_state_dim']) - 1
+            int(self.config['HYPERPARAMETERS']['path_state_dim']) - 5
         ], axis=0)
 
         # Initialize the initial hidden state for paths
         path_state = tf.concat([
-            tf.expand_dims(f_['bandwith'], axis=1),
+            # tf.expand_dims(f_['bandwith'], axis=1),
+            f_['bandwith'],
+            f_['packet'],
+            f_['packet_size_per_flow'],
+            f_['type_per_flow'],
+            tf.expand_dims(f_['length_per_flow'], axis=1),
             tf.zeros(shape)
         ], axis=1)
 

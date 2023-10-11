@@ -132,6 +132,11 @@ def transformation(x, y):
         Returns:
             x,y: The modified predictor/target variables.
         """
+    x["n_links"] = x["capacity_per_link"].shape[0]
+    x["n_paths"] = x["id_per_flow"].shape[0]
+    x["bandwith"] = x["traffic_per_flow"]
+    x["packets"] = x["packets_per_flow"]
+    x["links"] = x["link_to_path"].values
     return x, y
 
 
