@@ -105,7 +105,7 @@ class RouteNetModel(tf.keras.Model):
         # Compute the shape for the  all-zero tensor for path_state
         shape = tf.stack([
             f_['n_paths'],
-            int(self.config['HYPERPARAMETERS']['path_state_dim']) - 5
+            int(self.config['HYPERPARAMETERS']['path_state_dim']) - 6
         ], axis=0)
 
         # Initialize the initial hidden state for paths
