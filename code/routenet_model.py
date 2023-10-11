@@ -128,10 +128,10 @@ class RouteNetModel(tf.keras.Model):
 
             ids = tf.stack([paths, seqs], axis=1)
             max_len = tf.cast(f_["link_to_path"].bounding_shape()[1], tf.int32)
-            shape = tf.stack([
+            shape = tf.cast(tf.stack([
                 f_['n_paths'],
                 max_len,
-                int(self.config['HYPERPARAMETERS']['link_state_dim'])])
+                int(self.config['HYPERPARAMETERS']['link_state_dim'])]), tf.int64)
 
             lens = tf.math.segment_sum(data=tf.ones_like(paths),
                                        segment_ids=paths)
