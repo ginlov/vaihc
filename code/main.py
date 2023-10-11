@@ -22,6 +22,7 @@ import tempfile
 import os
 from read_dataset import input_fn, transformation
 from routenet_model import model_fn
+from tensorflow import TensorSpec, TensorShape, RaggedTensorSpec, TypeSpec
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
@@ -51,12 +52,33 @@ def train_and_evaluate(train_dir, eval_dir, config, model_dir=None):
     )
 
     train_spec = tf.estimator.TrainSpec(
-        input_fn=lambda: tf.data.Dataset.load("training", compression="GZIP").map(transformation),
+        input_fn=lambda: tf.data.Dataset.load("training", element_spec=({'path_to_link': RaggedTensorSpec(TensorShape([None, None, 2]), tf.int32, 1, tf.int64),
+  'sample_id': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'link_to_path': RaggedTensorSpec(TensorShape([None, None]), tf.int32, 1, tf.int64),
+  'length_per_flow': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'traffic_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packet_size_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'id_per_flow': TensorSpec(shape=(None,), dtype=tf.string, name=None),
+  'type_per_flow': TensorSpec(shape=(None, 2), dtype=tf.float32, name=None),
+  'capacity_per_link': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packets_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None)},
+ TensorSpec(shape=None, dtype=tf.float32, name=None)), 
+                                              compression="GZIP").map(transformation),
         max_steps=int(config['RUN_CONFIG']['train_steps'])
     )
 
     eval_spec = tf.estimator.EvalSpec(
-        input_fn=lambda: tf.data.Dataset.load("training_warmup", compression="GZIP").map(transformation),
+        input_fn=lambda: tf.data.Dataset.load("training_warmup",element_spec=({'path_to_link': RaggedTensorSpec(TensorShape([None, None, 2]), tf.int32, 1, tf.int64),
+  'sample_id': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'link_to_path': RaggedTensorSpec(TensorShape([None, None]), tf.int32, 1, tf.int64),
+  'length_per_flow': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'traffic_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packet_size_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'id_per_flow': TensorSpec(shape=(None,), dtype=tf.string, name=None),
+  'type_per_flow': TensorSpec(shape=(None, 2), dtype=tf.float32, name=None),
+  'capacity_per_link': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packets_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None)},
+ TensorSpec(shape=None, dtype=tf.float32, name=None)), compression="GZIP").map(transformation),
         throttle_secs=int(config['RUN_CONFIG']['throttle_secs'])
     )
 
@@ -82,7 +104,17 @@ def predict(test_dir, model_dir, config):
         params=config
     )
 
-    pred_results = estimator.predict(input_fn=lambda: tf.data.Dataset.load("test_hide_label", compression="GZIP").map(transformation))
+    pred_results = estimator.predict(input_fn=lambda: tf.data.Dataset.load("test_hide_label",element_spec=({'path_to_link': RaggedTensorSpec(TensorShape([None, None, 2]), tf.int32, 1, tf.int64),
+  'sample_id': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'link_to_path': RaggedTensorSpec(TensorShape([None, None]), tf.int32, 1, tf.int64),
+  'length_per_flow': TensorSpec(shape=(None,), dtype=tf.int32, name=None),
+  'traffic_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packet_size_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'id_per_flow': TensorSpec(shape=(None,), dtype=tf.string, name=None),
+  'type_per_flow': TensorSpec(shape=(None, 2), dtype=tf.float32, name=None),
+  'capacity_per_link': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None),
+  'packets_per_flow': TensorSpec(shape=(None, 1), dtype=tf.float32, name=None)},
+ TensorSpec(shape=None, dtype=tf.float32, name=None)), compression="GZIP").map(transformation))
 
     return [pred['predictions'] for pred in pred_results]
 
