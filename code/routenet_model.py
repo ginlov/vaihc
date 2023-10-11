@@ -90,9 +90,11 @@ class RouteNetModel(tf.keras.Model):
         seqs = []
         segment = 0
         for x in f_["link_to_path"]:
-            paths += len(x)*[segment]
+            paths += x.shape[0]*[segment]
             segment+=1
-            seqs += list(range(len(x)))
+            seqs += list(range(x.shape[0]))
+        paths = tf.convert_to_tensor(paths, tf.int32)
+        seqs = tf.convert_to_tensor(seqs, tf.int32)
 
         f_["paths"] = paths
         f_["seqences"] = seqs
